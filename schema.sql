@@ -8,3 +8,6 @@ CREATE TABLE IF NOT EXISTS deadlines (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 一覧の ORDER BY deadline_date ASC を高速化
+CREATE INDEX IF NOT EXISTS idx_deadlines_deadline_date ON deadlines (deadline_date);

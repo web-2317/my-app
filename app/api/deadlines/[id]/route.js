@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { deleteDeadline, updateDeadline } from "@/lib/db";
 
+export const runtime = "edge";
+
 export async function PUT(request, { params }) {
   try {
     const body = await request.json();

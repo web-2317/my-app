@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createDeadline, getAllDeadlines } from "@/lib/db";
 
+export const runtime = "edge";
+
 export async function GET() {
   try {
     const deadlines = await getAllDeadlines();
