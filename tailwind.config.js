@@ -9,8 +9,8 @@ module.exports = {
     extend: {
       colors: {
         page: "#F4F7F9",
-        accent: "#4A90E2",
-        "accent-hover": "#3A7BC8",
+        accent: "#3B82F6",
+        "accent-hover": "#2563EB",
       },
       fontFamily: {
         sans: [

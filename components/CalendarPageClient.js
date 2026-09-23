@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CalendarView from "./CalendarView";
-import TypeFilter from "./TypeFilter";
+import FilterBar from "./FilterBar";
 import { useDeadlineTypes } from "@/lib/useDeadlineTypes";
+import { useDeadlinesChanged } from "@/lib/useDeadlinesChanged";
 
 export default function CalendarPageClient() {
   const [deadlines, setDeadlines] = useState([]);
@@ -11,33 +12,32 @@ export default function CalendarPageClient() {
   const [excludedTypes, setExcludedTypes] = useState(() => new Set());
   const { types } = useDeadlineTypes();
 
-  useEffect(() => {
-    fetch("/api/deadlines")
-      .then((r) => r.json())
-      .then((data) => {
-        setDeadlines(data);
-        setLoading(false);
-      });
+  const load = useCallback(async () => {
+    const res = await fetch("/api/deadlines");
+    const data = await res.json();
+    setDeadlines(data);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+  useDeadlinesChanged(load);
 
   const visibleDeadlines = deadlines.filter((d) => !excludedTypes.has(d.type));
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <div className="mb-8 text-center">
+      <div className="mb-6 text-center">
         <h1 className="text-2xl font-bold text-gray-900">カレンダー</h1>
         <p className="mt-1 text-sm text-gray-500">月表示で締め切りを確認</p>
       </div>
 
-      {!loading && (
-        <div className="mb-6">
-          <TypeFilter
-            types={types}
-            excluded={excludedTypes}
-            onChange={setExcludedTypes}
-          />
-        </div>
-      )}
+      <FilterBar
+        types={types}
+        excluded={excludedTypes}
+        onExcludedChange={setExcludedTypes}
+      />
 
       {loading ? (
         <p className="text-center text-sm text-gray-400">読み込み中…</p>

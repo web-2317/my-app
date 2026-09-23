@@ -6,7 +6,6 @@ import { TYPE_COLOR_PALETTE, getTypeColor } from "@/lib/constants";
 const emptyForm = { name: "", color: TYPE_COLOR_PALETTE[0].key };
 
 export default function TypeManager({ types, onChanged }) {
-  const [open, setOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -62,107 +61,95 @@ export default function TypeManager({ types, onChanged }) {
   };
 
   return (
-    <section className="rounded-xl border border-gray-100 bg-white shadow-card">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between px-5 py-3 text-sm font-medium text-gray-700"
-      >
-        種別を管理
-        <span className="text-gray-400">{open ? "－" : "＋"}</span>
-      </button>
-
-      {open && (
-        <div className="border-t border-gray-50 px-5 py-4">
-          {types.length > 0 && (
-            <ul className="mb-4 space-y-2">
-              {types.map((t) => (
-                <li
-                  key={t.id}
-                  className="flex items-center justify-between gap-2 text-sm text-gray-700"
-                >
-                  <span className="flex items-center gap-2">
-                    <span
-                      className={`h-2.5 w-2.5 rounded-full ${getTypeColor(t.color).dot}`}
-                    />
-                    {t.name}
-                  </span>
-                  <span className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => startEdit(t)}
-                      className="text-xs text-gray-500 hover:text-accent"
-                    >
-                      編集
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(t)}
-                      className="text-xs text-gray-500 hover:text-red-500"
-                    >
-                      削除
-                    </button>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">
-                種別名
-              </label>
-              <input
-                value={form.name}
-                onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                required
-                placeholder="例: 適性検査"
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">
-                色
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {TYPE_COLOR_PALETTE.map((c) => (
-                  <button
-                    key={c.key}
-                    type="button"
-                    title={c.label}
-                    onClick={() => setForm((p) => ({ ...p, color: c.key }))}
-                    className={`h-6 w-6 rounded-full ${c.dot} ${
-                      form.color === c.key
-                        ? "ring-2 ring-accent ring-offset-2"
-                        : ""
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                disabled={saving}
-                className="rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white transition hover:bg-accent-hover disabled:opacity-50"
-              >
-                {saving ? "保存中…" : editingId ? "更新する" : "追加する"}
-              </button>
-              {editingId && (
+    <section className="rounded-2xl bg-white p-5 shadow-card">
+      <h2 className="mb-4 text-sm font-bold text-gray-700">種別一覧</h2>
+      {types.length > 0 ? (
+        <ul className="mb-5 space-y-2">
+          {types.map((t) => (
+            <li
+              key={t.id}
+              className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700"
+            >
+              <span className="flex items-center gap-2">
+                <span
+                  className={`h-2.5 w-2.5 rounded-full ${getTypeColor(t.color).dot}`}
+                />
+                {t.name}
+              </span>
+              <span className="flex gap-3">
                 <button
                   type="button"
-                  onClick={resetForm}
-                  className="rounded-lg border border-gray-200 px-4 py-2 text-xs text-gray-600 hover:bg-gray-50"
+                  onClick={() => startEdit(t)}
+                  className="text-xs text-gray-500 hover:text-accent"
                 >
-                  キャンセル
+                  編集
                 </button>
-              )}
-            </div>
-          </form>
-        </div>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(t)}
+                  className="text-xs text-gray-500 hover:text-red-500"
+                >
+                  削除
+                </button>
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mb-5 text-sm text-gray-400">種別が登録されていません</p>
       )}
+
+      <form onSubmit={handleSubmit} className="space-y-3 border-t border-gray-50 pt-4">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-500">
+            種別名
+          </label>
+          <input
+            value={form.name}
+            onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+            required
+            placeholder="例: 適性検査"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-500">
+            色
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {TYPE_COLOR_PALETTE.map((c) => (
+              <button
+                key={c.key}
+                type="button"
+                title={c.label}
+                onClick={() => setForm((p) => ({ ...p, color: c.key }))}
+                className={`h-6 w-6 rounded-full ${c.dot} ${
+                  form.color === c.key ? "ring-2 ring-accent ring-offset-2" : ""
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+        {error && <p className="text-sm text-red-500">{error}</p>}
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            disabled={saving}
+            className="rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white transition hover:bg-accent-hover disabled:opacity-50"
+          >
+            {saving ? "保存中…" : editingId ? "更新する" : "追加する"}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="rounded-lg border border-gray-200 px-4 py-2 text-xs text-gray-600 hover:bg-gray-50"
+            >
+              キャンセル
+            </button>
+          )}
+        </div>
+      </form>
     </section>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDeadlineTypes } from "@/lib/useDeadlineTypes";
+import { useCompanies } from "@/lib/useCompanies";
 
 const emptyForm = {
   company_name: "",
@@ -10,8 +11,9 @@ const emptyForm = {
   memo: "",
 };
 
-export default function DeadlineForm({ editing, onSave, onCancel, showCancel = false }) {
+export default function DeadlineForm({ editing, onSave, onCancel }) {
   const { types } = useDeadlineTypes();
+  const { companies } = useCompanies();
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -68,91 +70,91 @@ export default function DeadlineForm({ editing, onSave, onCancel, showCancel = f
   };
 
   return (
-    <section className="rounded-xl border border-gray-100 bg-white p-6 shadow-card">
-      <h2 className="mb-4 text-center text-xl font-bold text-gray-900">
-        {editing ? "締め切りを編集" : "締め切りを追加"}
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="mb-1 block text-xs font-medium text-gray-500">
+          企業名
+        </label>
+        <input
+          name="company_name"
+          list="company-name-options"
+          value={form.company_name}
+          onChange={handleChange}
+          required
+          autoComplete="off"
+          placeholder="例: 株式会社サンプル"
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+        />
+        <datalist id="company-name-options">
+          {companies.map((c) => (
+            <option key={c.id} value={c.name} />
+          ))}
+        </datalist>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-500">
-            企業名
+            締め切り日
           </label>
           <input
-            name="company_name"
-            value={form.company_name}
+            name="deadline_date"
+            type="date"
+            value={form.deadline_date}
             onChange={handleChange}
             required
-            placeholder="例: 株式会社サンプル"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-xs font-medium text-gray-500">
-              締め切り日
-            </label>
-            <input
-              name="deadline_date"
-              type="date"
-              value={form.deadline_date}
-              onChange={handleChange}
-              required
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-gray-500">
-              種別
-            </label>
-            <select
-              name="type"
-              value={form.type}
-              onChange={handleChange}
-              required
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-            >
-              {types.length === 0 && <option value="">種別がありません</option>}
-              {types.map((t) => (
-                <option key={t.id} value={t.name}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-500">
-            メモ
+            種別
           </label>
-          <textarea
-            name="memo"
-            value={form.memo}
+          <select
+            name="type"
+            value={form.type}
             onChange={handleChange}
-            rows={3}
-            placeholder="任意"
-            className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-          />
-        </div>
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            disabled={saving}
-            className="flex-1 rounded-lg bg-accent py-2.5 text-sm font-medium text-white transition hover:bg-accent-hover disabled:opacity-50"
+            required
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           >
-            {saving ? "保存中…" : editing ? "更新する" : "追加する"}
-          </button>
-          {(editing || showCancel) && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50"
-            >
-              キャンセル
-            </button>
-          )}
+            {types.length === 0 && <option value="">種別がありません</option>}
+            {types.map((t) => (
+              <option key={t.id} value={t.name}>
+                {t.name}
+              </option>
+            ))}
+          </select>
         </div>
-      </form>
-    </section>
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-gray-500">
+          メモ
+        </label>
+        <textarea
+          name="memo"
+          value={form.memo}
+          onChange={handleChange}
+          rows={3}
+          placeholder="任意"
+          className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+        />
+      </div>
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={saving}
+          className="flex-1 rounded-lg bg-accent py-2.5 text-sm font-medium text-white transition hover:bg-accent-hover disabled:opacity-50"
+        >
+          {saving ? "保存中…" : editing ? "更新する" : "追加する"}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50"
+        >
+          キャンセル
+        </button>
+      </div>
+    </form>
   );
 }
