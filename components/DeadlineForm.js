@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DEADLINE_TYPES } from "@/lib/constants";
+import { useDeadlineTypes } from "@/lib/useDeadlineTypes";
 
 const emptyForm = {
   company_name: "",
   deadline_date: "",
-  type: "ES",
+  type: "",
   memo: "",
 };
 
 export default function DeadlineForm({ editing, onSave, onCancel, showCancel = false }) {
+  const { types } = useDeadlineTypes();
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -28,6 +29,13 @@ export default function DeadlineForm({ editing, onSave, onCancel, showCancel = f
     }
     setError("");
   }, [editing]);
+
+  // 種別一覧を取得できたら、未選択（新規追加時）の場合に先頭の種別を初期値にする
+  useEffect(() => {
+    if (!editing && !form.type && types.length > 0) {
+      setForm((prev) => ({ ...prev, type: types[0].name }));
+    }
+  }, [types, editing, form.type]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -100,11 +108,13 @@ export default function DeadlineForm({ editing, onSave, onCancel, showCancel = f
               name="type"
               value={form.type}
               onChange={handleChange}
+              required
               className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             >
-              {DEADLINE_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
+              {types.length === 0 && <option value="">種別がありません</option>}
+              {types.map((t) => (
+                <option key={t.id} value={t.name}>
+                  {t.name}
                 </option>
               ))}
             </select>

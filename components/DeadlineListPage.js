@@ -3,12 +3,17 @@
 import { useCallback, useEffect, useState } from "react";
 import DeadlineCard from "./DeadlineCard";
 import DeadlineForm from "./DeadlineForm";
+import TypeFilter from "./TypeFilter";
+import TypeManager from "./TypeManager";
+import { useDeadlineTypes } from "@/lib/useDeadlineTypes";
 
 export default function DeadlineListPage() {
   const [deadlines, setDeadlines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [excludedTypes, setExcludedTypes] = useState(() => new Set());
+  const { types, reload: reloadTypes } = useDeadlineTypes();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -40,13 +45,15 @@ export default function DeadlineListPage() {
     load();
   };
 
-  const upcoming = deadlines.filter((d) => {
+  const visibleDeadlines = deadlines.filter((d) => !excludedTypes.has(d.type));
+
+  const upcoming = visibleDeadlines.filter((d) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return new Date(d.deadline_date + "T00:00:00") >= today;
   });
 
-  const past = deadlines.filter((d) => {
+  const past = visibleDeadlines.filter((d) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return new Date(d.deadline_date + "T00:00:00") < today;
@@ -84,11 +91,30 @@ export default function DeadlineListPage() {
         </div>
       )}
 
+      <div className="mb-8 space-y-4">
+        <TypeManager
+          types={types}
+          onChanged={() => {
+            reloadTypes();
+            load();
+          }}
+        />
+        <TypeFilter
+          types={types}
+          excluded={excludedTypes}
+          onChange={setExcludedTypes}
+        />
+      </div>
+
       {loading ? (
         <p className="text-center text-sm text-gray-400">読み込み中…</p>
       ) : deadlines.length === 0 ? (
         <p className="rounded-xl bg-white py-12 text-center text-sm text-gray-400 shadow-card">
           締め切りはまだありません
+        </p>
+      ) : visibleDeadlines.length === 0 ? (
+        <p className="rounded-xl bg-white py-12 text-center text-sm text-gray-400 shadow-card">
+          選択した種別の締め切りはありません
         </p>
       ) : (
         <div className="space-y-8">
@@ -102,6 +128,7 @@ export default function DeadlineListPage() {
                   <DeadlineCard
                     key={d.id}
                     deadline={d}
+                    types={types}
                     onEdit={(item) => {
                       setShowForm(false);
                       setEditing(item);
@@ -122,6 +149,7 @@ export default function DeadlineListPage() {
                   <DeadlineCard
                     key={d.id}
                     deadline={d}
+                    types={types}
                     onEdit={(item) => {
                       setShowForm(false);
                       setEditing(item);

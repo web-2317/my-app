@@ -1,9 +1,10 @@
-import { TYPE_BADGE_COLORS } from "@/lib/constants";
+import { colorForType } from "@/lib/constants";
 
-export default function TypeBadge({ type }) {
+export default function TypeBadge({ type, types }) {
+  const color = colorForType(types, type);
   return (
     <span
-      className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${TYPE_BADGE_COLORS[type] || "bg-gray-100 text-gray-600"}`}
+      className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${color.badge}`}
     >
       {type}
     </span>

@@ -2,11 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { buildMonthGrid } from "@/lib/dates";
-import { TYPE_BADGE_COLORS } from "@/lib/constants";
+import { colorForType } from "@/lib/constants";
 
 const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
 
-export default function CalendarView({ deadlines }) {
+export default function CalendarView({ deadlines, types }) {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
@@ -109,7 +109,7 @@ export default function CalendarView({ deadlines }) {
                       key={ev.id}
                       title={`${ev.company_name} (${ev.type})`}
                       className={`truncate rounded px-1 py-0.5 text-[10px] leading-tight ${
-                        TYPE_BADGE_COLORS[ev.type] || "bg-gray-100"
+                        colorForType(types, ev.type).badge
                       }`}
                     >
                       {ev.company_name}
@@ -123,12 +123,12 @@ export default function CalendarView({ deadlines }) {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-3 text-xs text-gray-500">
-        {["ES", "アンケート", "その他"].map((t) => (
-          <span key={t} className="flex items-center gap-1">
+        {types.map((t) => (
+          <span key={t.id} className="flex items-center gap-1">
             <span
-              className={`inline-block rounded px-1.5 py-0.5 ${TYPE_BADGE_COLORS[t]}`}
+              className={`inline-block rounded px-1.5 py-0.5 ${colorForType(types, t.name).badge}`}
             >
-              {t}
+              {t.name}
             </span>
           </span>
         ))}

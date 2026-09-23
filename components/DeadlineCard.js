@@ -1,12 +1,11 @@
-import { TYPE_BORDER_COLORS } from "@/lib/constants";
+import { colorForType } from "@/lib/constants";
 import { daysUntil, daysUntilLabel, formatDate } from "@/lib/dates";
 import TypeBadge from "./TypeBadge";
 
-export default function DeadlineCard({ deadline, onEdit, onDelete }) {
+export default function DeadlineCard({ deadline, types, onEdit, onDelete }) {
   const days = daysUntil(deadline.deadline_date);
   const urgent = days >= 0 && days <= 7;
-  const borderClass =
-    TYPE_BORDER_COLORS[deadline.type] || "border-t-gray-300";
+  const borderClass = colorForType(types, deadline.type).border;
 
   return (
     <article
@@ -23,7 +22,7 @@ export default function DeadlineCard({ deadline, onEdit, onDelete }) {
             {deadline.company_name}
           </h3>
         </div>
-        <TypeBadge type={deadline.type} />
+        <TypeBadge type={deadline.type} types={types} />
       </div>
       {deadline.memo && (
         <p className="mb-4 text-sm leading-relaxed text-gray-500">
