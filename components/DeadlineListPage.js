@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import DeadlineCard from "./DeadlineCard";
 import DeadlineForm from "./DeadlineForm";
 import FilterBar from "./FilterBar";
@@ -8,16 +8,14 @@ import Modal from "./Modal";
 import { useDeadlineTypes } from "@/lib/useDeadlineTypes";
 import { useDeadlinesChanged, notifyDeadlinesChanged } from "@/lib/useDeadlinesChanged";
 
-export default function DeadlineListPage() {
-  const [deadlines, setDeadlines] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function DeadlineListPage({ initialDeadlines, initialTypes }) {
+  const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [editing, setEditing] = useState(null);
   const [excludedTypes, setExcludedTypes] = useState(() => new Set());
   const [sortOrder, setSortOrder] = useState("asc");
-  const { types } = useDeadlineTypes();
+  const { types } = useDeadlineTypes(initialTypes);
 
   const load = useCallback(async () => {
-    setLoading(true);
     const res = await fetch("/api/deadlines");
     const data = await res.json();
     if (!res.ok) {
@@ -26,12 +24,8 @@ export default function DeadlineListPage() {
     } else {
       setDeadlines(data);
     }
-    setLoading(false);
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
   useDeadlinesChanged(load);
 
   const handleDelete = async (id) => {
@@ -72,9 +66,7 @@ export default function DeadlineListPage() {
         onSortOrderChange={setSortOrder}
       />
 
-      {loading ? (
-        <p className="text-center text-sm text-gray-400">読み込み中…</p>
-      ) : deadlines.length === 0 ? (
+      {deadlines.length === 0 ? (
         <p className="rounded-2xl bg-white py-12 text-center text-sm text-gray-400 shadow-card">
           締め切りはまだありません
         </p>

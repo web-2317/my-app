@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { deleteDeadline, updateDeadline } from "@/lib/db";
 
 export const runtime = "edge";
+export const preferredRegion = "sin1";
 
 export async function PUT(request, { params }) {
   try {

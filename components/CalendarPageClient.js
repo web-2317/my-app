@@ -1,27 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import CalendarView from "./CalendarView";
 import FilterBar from "./FilterBar";
 import { useDeadlineTypes } from "@/lib/useDeadlineTypes";
 import { useDeadlinesChanged } from "@/lib/useDeadlinesChanged";
 
-export default function CalendarPageClient() {
-  const [deadlines, setDeadlines] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function CalendarPageClient({ initialDeadlines, initialTypes }) {
+  const [deadlines, setDeadlines] = useState(initialDeadlines);
   const [excludedTypes, setExcludedTypes] = useState(() => new Set());
-  const { types } = useDeadlineTypes();
+  const { types } = useDeadlineTypes(initialTypes);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/deadlines");
     const data = await res.json();
     setDeadlines(data);
-    setLoading(false);
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
   useDeadlinesChanged(load);
 
   const visibleDeadlines = deadlines.filter((d) => !excludedTypes.has(d.type));
@@ -39,11 +34,7 @@ export default function CalendarPageClient() {
         onExcludedChange={setExcludedTypes}
       />
 
-      {loading ? (
-        <p className="text-center text-sm text-gray-400">読み込み中…</p>
-      ) : (
-        <CalendarView deadlines={visibleDeadlines} types={types} />
-      )}
+      <CalendarView deadlines={visibleDeadlines} types={types} />
     </main>
   );
 }

@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { createDeadline, getAllDeadlines } from "@/lib/db";
 
 export const runtime = "edge";
+// Neon の DB リージョン（ap-southeast-1 = Singapore）に合わせて実行リージョンを固定し、
+// Edge Function <-> DB 間の往復レイテンシを削減する
+export const preferredRegion = "sin1";
 
 export async function GET() {
   try {
