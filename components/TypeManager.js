@@ -60,12 +60,25 @@ export default function TypeManager({ types, onChanged }) {
     onChanged();
   };
 
+  const handleMove = async (index, direction) => {
+    const target = index + direction;
+    if (target < 0 || target >= types.length) return;
+    const reordered = [...types];
+    [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+    await fetch("/api/types/reorder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderedIds: reordered.map((t) => t.id) }),
+    });
+    onChanged();
+  };
+
   return (
     <section className="rounded-2xl bg-white p-5 shadow-card">
       <h2 className="mb-4 text-sm font-bold text-gray-700">種別一覧</h2>
       {types.length > 0 ? (
-        <ul className="mb-5 space-y-2">
-          {types.map((t) => (
+        <ul className="mb-5 space-y-1">
+          {types.map((t, index) => (
             <li
               key={t.id}
               className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700"
@@ -76,11 +89,29 @@ export default function TypeManager({ types, onChanged }) {
                 />
                 {t.name}
               </span>
-              <span className="flex gap-3">
+              <span className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => handleMove(index, -1)}
+                  disabled={index === 0}
+                  aria-label="上へ移動"
+                  className="flex h-6 w-6 items-center justify-center rounded text-gray-400 hover:bg-gray-50 hover:text-accent disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400"
+                >
+                  ▲
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleMove(index, 1)}
+                  disabled={index === types.length - 1}
+                  aria-label="下へ移動"
+                  className="flex h-6 w-6 items-center justify-center rounded text-gray-400 hover:bg-gray-50 hover:text-accent disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400"
+                >
+                  ▼
+                </button>
                 <button
                   type="button"
                   onClick={() => startEdit(t)}
-                  className="text-xs text-gray-500 hover:text-accent"
+                  className="ml-2 text-xs text-gray-500 hover:text-accent"
                 >
                   編集
                 </button>

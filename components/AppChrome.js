@@ -11,7 +11,7 @@ export default function AppChrome({ children }) {
 
   return (
     <>
-      <div className="pb-24">{children}</div>
+      <div className="pb-28">{children}</div>
       <BottomNav onAddClick={() => setShowAdd(true)} />
       {showAdd && (
         <Modal title="締め切りを追加" onClose={() => setShowAdd(false)}>

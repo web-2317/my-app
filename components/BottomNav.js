@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 function ListIcon({ active }) {
   return (
     <svg
-      className={`h-5 w-5 ${active ? "text-accent" : "text-gray-400"}`}
+      className={`h-5 w-5 ${active ? "text-accent" : "text-gray-500"}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -24,7 +24,7 @@ function ListIcon({ active }) {
 function CalendarIcon({ active }) {
   return (
     <svg
-      className={`h-5 w-5 ${active ? "text-accent" : "text-gray-400"}`}
+      className={`h-5 w-5 ${active ? "text-accent" : "text-gray-500"}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -42,7 +42,7 @@ function CalendarIcon({ active }) {
 function SettingsIcon({ active }) {
   return (
     <svg
-      className={`h-5 w-5 ${active ? "text-accent" : "text-gray-400"}`}
+      className={`h-5 w-5 ${active ? "text-accent" : "text-gray-500"}`}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -65,7 +65,7 @@ function SettingsIcon({ active }) {
 function PersonIcon() {
   return (
     <svg
-      className="h-5 w-5 text-gray-300"
+      className="h-5 w-5 text-gray-400"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -83,7 +83,7 @@ function PersonIcon() {
 function PlusIcon() {
   return (
     <svg
-      className="h-7 w-7 text-white"
+      className="h-6 w-6 text-white"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -96,12 +96,15 @@ function PlusIcon() {
 
 function NavLink({ href, active, icon, label }) {
   return (
-    <Link
-      href={href}
-      className="flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px]"
-    >
-      {icon}
-      <span className={active ? "font-medium text-accent" : "text-gray-400"}>
+    <Link href={href} className="flex flex-1 flex-col items-center gap-0.5 py-1.5">
+      <span
+        className={`flex h-8 w-8 items-center justify-center rounded-full ${
+          active ? "bg-blue-50" : ""
+        }`}
+      >
+        {icon}
+      </span>
+      <span className={`text-[10px] ${active ? "font-medium text-accent" : "text-gray-500"}`}>
         {label}
       </span>
     </Link>
@@ -112,8 +115,8 @@ export default function BottomNav({ onAddClick }) {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-100 bg-white/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
-      <div className="relative mx-auto flex max-w-3xl items-stretch">
+    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      <div className="pointer-events-auto flex w-full max-w-md items-center justify-around rounded-full bg-white px-2 py-2 shadow-lg ring-1 ring-black/5">
         <NavLink
           href="/"
           active={pathname === "/"}
@@ -126,7 +129,14 @@ export default function BottomNav({ onAddClick }) {
           icon={<CalendarIcon active={pathname === "/calendar"} />}
           label="カレンダー"
         />
-        <div className="flex-1" aria-hidden />
+        <button
+          type="button"
+          onClick={onAddClick}
+          aria-label="締め切りを追加"
+          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-md transition hover:bg-accent-hover"
+        >
+          <PlusIcon />
+        </button>
         <NavLink
           href="/settings"
           active={pathname === "/settings"}
@@ -135,20 +145,13 @@ export default function BottomNav({ onAddClick }) {
         />
         <button
           type="button"
-          className="flex flex-1 cursor-default flex-col items-center gap-0.5 py-2 text-[11px] text-gray-300"
+          className="flex flex-1 cursor-default flex-col items-center gap-0.5 py-1.5"
           tabIndex={-1}
         >
-          <PersonIcon />
-          <span>マイページ</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={onAddClick}
-          aria-label="締め切りを追加"
-          className="absolute left-1/2 top-0 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-white shadow-lg ring-4 ring-page transition hover:bg-accent-hover"
-        >
-          <PlusIcon />
+          <span className="flex h-8 w-8 items-center justify-center">
+            <PersonIcon />
+          </span>
+          <span className="text-[10px] text-gray-400">マイページ</span>
         </button>
       </div>
     </nav>

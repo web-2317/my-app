@@ -7,7 +7,7 @@ export default function DeadlineCard({ deadline, types, onEdit, onDelete }) {
   const overdue = days < 0;
 
   return (
-    <article className="relative rounded-2xl bg-white p-4 shadow-card">
+    <article className="relative rounded-3xl bg-white p-4 shadow-card">
       <div className="absolute right-4 top-4">
         <TypeBadge type={deadline.type} types={types} />
       </div>

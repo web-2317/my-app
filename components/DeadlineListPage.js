@@ -75,7 +75,7 @@ export default function DeadlineListPage({ initialDeadlines, initialTypes }) {
           選択した種別の締め切りはありません
         </p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {visibleDeadlines.map((d) => (
             <DeadlineCard
               key={d.id}

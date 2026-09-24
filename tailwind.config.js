@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        page: "#F4F7F9",
+        page: "#E7EBF0",
         accent: "#3B82F6",
         "accent-hover": "#2563EB",
       },
@@ -24,7 +24,7 @@ module.exports = {
         ],
       },
       boxShadow: {
-        card: "0 2px 12px rgba(0, 0, 0, 0.06)",
+        card: "0 4px 16px rgba(15, 23, 42, 0.10), 0 1px 3px rgba(15, 23, 42, 0.08)",
       },
     },
   },
